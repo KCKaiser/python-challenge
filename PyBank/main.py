@@ -13,30 +13,39 @@ for filename in glob.glob('./raw_data/*.csv'):
             rev.append(row[1])
         # Getting rid of headers
         date = date[1:]
-        rev = rev[1:]
+        rev = rev[1:]      
 
     # Convert Revnue into integers
     rev_num = [int(num) for num in rev]
 
-    # Revenue Max
-    rev_max = max(rev_num)
-    max_index = rev_num.index(rev_max)
-    # Date of Max Revanue
-    date_max = date[max_index] 
+    # Create a new list of Revenue Differences
+    rev_diff = []
+    for x in rev_num[:-1]:
+        index1 = rev_num.index(x)
+        index2 = rev_num.index(x)+1
+        diff = (rev_num[index2] - rev_num[index1])
+        rev_diff.append(diff)
 
-    # Revnue Min
-    rev_min = min(rev_num) 
-    min_index = rev_num.index(rev_min)
-    # Date of Min Revenue
-    date_min = date[min_index]
+    # Greatest Revenue Change (Max)
+    diff_max = max(rev_diff)
+    diffmax_index = rev_diff.index(diff_max)+1
+    # Date of Greatest Revenue Change
+    date_diff_max = date[diffmax_index] 
+
+    # Least Revenue Change (Min)
+    diff_min = min(rev_diff)
+    diffmin_index = rev_diff.index(diff_min)+1
+    # Date of Least Revenue Change
+    date_diff_min = date[diffmin_index]
 
     # Total Months
     num_months = len(date)
 
     # Total Revenue
     rev_sum = sum(rev_num)
-    # Average Revenue
-    rev_avg = rev_sum/len(rev_num)
+
+    # Average Revenue Change
+    rev_diff_avg = sum(rev_diff)/float(len(rev_diff))
 
     # Create text file
     with open("." + filename[10:-4] + '.txt', 'w') as f:
@@ -45,9 +54,9 @@ for filename in glob.glob('./raw_data/*.csv'):
         f.write("----------------------------\n")
         f.write("Total Months: " + str(num_months)+"\n")
         f.write("Total Revenue: $" + str(rev_sum)+"\n")
-        f.write('Average Revenue Change: ' + "$" + "{:.2f}".format(rev_avg) + "\n")
-        f.write(f'Greatest Increase in Revenue: {date_max} (${rev_max})\n')
-        f.write(f'Greatest Decrease in Revenue: {date_min} (${rev_min})\n')
+        f.write('Average Revenue Change: ' + "$" + "{:.2f}".format(rev_diff_avg) + "\n")
+        f.write(f'Greatest Increase in Revenue: {date_diff_max} (${diff_max})\n')
+        f.write(f'Greatest Decrease in Revenue: {date_diff_min} (${diff_min})\n')
         f.write("```")
 
     # Print
@@ -56,8 +65,7 @@ for filename in glob.glob('./raw_data/*.csv'):
     print("----------------------------")
     print("Total Months: " + str(num_months))
     print("Total Revenue: $" + str(rev_sum))
-    print('Average Revenue Change: ' + "$" + "{:.2f}".format(rev_avg))
-    print(f'Greatest Increase in Revenue: {date_max} (${rev_max})')
-    print(f'Greatest Decrease in Revenue: {date_min} (${rev_min})')
+    print('Average Revenue Change: ' + "$" + "{:.2f}".format(rev_diff_avg))
+    print(f'Greatest Increase in Revenue: {date_diff_max} (${diff_max})')
+    print(f'Greatest Decrease in Revenue: {date_diff_min} (${diff_min})')
     print("```")
-
